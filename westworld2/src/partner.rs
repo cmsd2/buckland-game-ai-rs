@@ -1,4 +1,7 @@
-use crate::location::Location;
+use crate::{
+    location::Location,
+    log::{ConsoleLog, Log, Named},
+};
 use game_state_machine::*;
 use rand::distributions::{Distribution, Standard};
 
@@ -24,12 +27,22 @@ pub struct Partner {
     location: Location,
 }
 
+impl<'a> Named<'a> for Partner {
+    fn name(&'a self) -> &'a str {
+        &self.name
+    }
+}
+
 impl Partner {
     pub fn new(name: String) -> Self {
         Partner {
             name,
             location: Location::Shack,
         }
+    }
+
+    pub fn log(&self, msg: String) {
+        ConsoleLog.log(self, msg);
     }
 }
 
@@ -43,13 +56,13 @@ impl State<Partner> for DoHouseWork {
 
         match rand::random() {
             PartnerChore::Mopping => {
-                println!("{}: Moppin' the floor", partner.name);
+                partner.log(format!("Moppin' the floor"));
             }
             PartnerChore::BedMaking => {
-                println!("{}: Makin' the bed", partner.name);
+                partner.log(format!("Makin' the bed"));
             }
             PartnerChore::Washing => {
-                println!("{}: Washin' the dishes", partner.name);
+                partner.log(format!("Washin' the dishes"));
             }
         }
 
@@ -61,7 +74,7 @@ pub struct VisitBathroom;
 
 impl State<Partner> for VisitBathroom {
     fn on_start(&mut self, partner: &mut Partner) {
-        println!("{}: Walkin' to the can", partner.name);
+        partner.log(format!("Walkin' to the can"));
     }
 
     fn on_resume(&mut self, partner: &mut Partner) {
@@ -69,12 +82,12 @@ impl State<Partner> for VisitBathroom {
     }
 
     fn update(&mut self, partner: &mut Partner) -> StateTransition<Partner> {
-        println!("{}: Ahhhhhh! Sweet relief", partner.name);
+        partner.log(format!("Ahhhhhh! Sweet relief"));
 
         StateTransition::Pop
     }
 
     fn on_stop(&mut self, partner: &mut Partner) {
-        println!("{}: Leavin' the Jon", partner.name);
+        partner.log(format!("Leavin' the Jon"));
     }
 }
