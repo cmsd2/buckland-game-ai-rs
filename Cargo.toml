@@ -1,2 +1,2 @@
 [workspace]
-members = ["westworld", "westworld2"]
+members = ["westworld", "westworld2", "westworld-bevy-ecs"]
